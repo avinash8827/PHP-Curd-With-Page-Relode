@@ -5,6 +5,7 @@
 
 
     if( isset($_GET['sbmt_btn']) ){
+
         $name = mysqli_real_escape_string($conn,$_GET['name']);
         $surname = mysqli_real_escape_string($conn,$_GET['surname']);
         $address = mysqli_real_escape_string($conn,$_GET['address']);
@@ -25,6 +26,25 @@
 
 
     }
+    if((isset($_GET['action'])) && (($_GET['action'])=='delete') ){
+       // echo "ohohoh";
+        $delid = (int)mysqli_real_escape_string($conn,$_GET['delid']);
+
+        $sql = "DELETE FROM `friend_tbl` WHERE id= '$delid' ";
+
+
+        mysqli_query($conn,$sql) or die(mysqli_error($conn));
+
+        $msg = '<div class="alert alert-danger" role="alert">
+                   Your Data Delete successfully        
+     </div>';
+
+
+
+
+    }
+
+
 ?>
 
 
@@ -41,10 +61,47 @@
 </head>
 
 <body>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table mytable">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Surname</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Mobail no.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td >A</td>
+                                <td>b</td>
+                                <td>c</td>
+                                <td>D</td>
+                                <td>e</td>
+                            </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-6 offset-3">
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
-            <?php
+                <?php
              echo $msg;
             
             ?>
@@ -79,7 +136,7 @@
     </div>
     <div class="container">
 
-    <?php
+        <?php
     $sql ='SELECT * FROM  friend_tbl';
 
     $result = mysqli_query($conn,$sql) or die(mysqli_error($conn));
@@ -96,9 +153,9 @@
                     <td>'.$row2['mobno'].'</td>
                     <td>'.$row2['addres'].'</td>
                     <td>
-                        <button class="btn btn-success sm">View</button>
-                        <button class="btn btn-info sm">Edit</button>
-                        <button class="btn btn-danger sm">Delet</button>
+                        <a href="#"  class="btn btn-success sm  viewbtn"  data-bs-toggle="modal" data-bs-target="#exampleModal">View</a>
+                        <a href="#"  class="btn btn-info sm">Edit</a>
+                        <a href="?action=delete&delid='.$row2['id'].'" class="btn btn-danger sm">Delet</a>
                     </td>
             </tr>';
 
@@ -107,7 +164,7 @@
     }
     
     ?>
-        <table class="table mt-5">
+        <table class="table mt-5 ">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
@@ -119,25 +176,43 @@
             </thead>
             <tbody>
                 <?php echo $row ; ?>
-               
+
             </tbody>
         </table>
 
     </div>
-
-
-
-
-
-
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
+    <script>
+    $(document).click(function(e) {
+
+
+        if (e.target.classList[5] == 'viewbtn') {
+            var id = e.target.closest('tr').querySelector('td:first-child').innerHTML
+            var name = e.target.closest('tr').querySelector('td:first-child').innerHTML
+            var surname = e.target.closest('tr').querySelector('td:first-child').innerHTML
+            var address = e.target.closest('tr').querySelector('td:first-child').innerHTML
+            var mobail  = e.target.closest('tr').querySelector('td:first-child').innerHTML
+
+
+            document.querySelector('.mytable > tbody > tr > td:firstchild').innerhtml=id
+            document.querySelector('.mytable > tbody > tr > td:firstchild').innerhtml=name
+            document.querySelector('.mytable > tbody > tr > td:firstchild').innerhtml=surname
+            document.querySelector('.mytable > tbody > tr > td:firstchild').innerhtml=address
+            document.querySelector('.mytable > tbody > tr > td:firstchild').innerhtml=mobail
+
+        }
+    });
+    </script>
+
 </body>
 
 </html>
+
 <?php 
     mysqli_close($conn);
 ?>
